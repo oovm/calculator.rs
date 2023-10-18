@@ -32,9 +32,11 @@ impl YggdrasilParser for CalculatorParser {
 pub enum CalculatorRule {
     Expression,
     Add,
+    Add2,
     Mul,
+    Mul2,
     Pow,
-    Atomic,
+    Atom,
     Number,
     Integer,
     WhiteSpace,
@@ -53,9 +55,11 @@ impl YggdrasilRule for CalculatorRule {
         match self {
             Self::Expression => "",
             Self::Add => "",
+            Self::Add2 => "",
             Self::Mul => "",
+            Self::Mul2 => "",
             Self::Pow => "",
-            Self::Atomic => "",
+            Self::Atom => "",
             Self::Number => "",
             Self::Integer => "",
             Self::WhiteSpace => "",
@@ -72,27 +76,41 @@ pub struct ExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AddNode {
-    pub add: Box<AddNode>,
-    pub rhs: MulNode,
+    pub add_2: Add2Node,
+    pub mul: MulNode,
+    pub span: Range<u32>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Add2Node {
+    pub add_2: Box<Add2Node>,
+    pub mul: MulNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MulNode {
-    pub mul: Box<MulNode>,
-    pub rhs: PowNode,
+    pub mul_2: Mul2Node,
+    pub pow: PowNode,
+    pub span: Range<u32>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Mul2Node {
+    pub mul_2: Box<Mul2Node>,
+    pub pow: PowNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PowNode {
-    pub atomic: AtomicNode,
-    pub rhs: Box<PowNode>,
+    pub atom: AtomNode,
+    pub pow: Box<PowNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AtomicNode {
+pub struct AtomNode {
     pub number: NumberNode,
     pub span: Range<u32>,
 }

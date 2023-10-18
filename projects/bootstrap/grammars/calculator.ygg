@@ -5,16 +5,14 @@ grammar Calculator {
 entry class Expression {
     Add
 }
-class Add {
-    lhs:Add ("+" rhs:Mul)?
-}
-class Mul {
-    lhs:Mul ("*" rhs:Pow)?
-}
+class Add { Mul Add2 }
+class Add2 { '+' Mul Add2 }
+class Mul { Pow Mul2 }
+class Mul2 { '*' Pow Mul2 }
 class Pow {
-    (lhs:Atomic "^")? rhs:Pow
+    Atom "^" Pow | Atom
 }
-class Atomic {
+class Atom {
     Number
 }
 // === number === ------------------------------------------------------------------------------------------------------
