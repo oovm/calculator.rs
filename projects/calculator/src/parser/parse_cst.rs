@@ -16,12 +16,10 @@ pub(super) fn parse_cst(input: &str, rule: CalculatorRule) -> OutputResult<Calcu
         CalculatorRule::IgnoreRegex => unreachable!(),
     })
 }
-
 #[inline]
 fn parse_expression(state: Input) -> Output {
     state.rule(CalculatorRule::Expression, |s| parse_add(s).and_then(|s| s.tag_node("add")))
 }
-
 #[inline]
 fn parse_add(state: Input) -> Output {
     state.rule(CalculatorRule::Add, |s| {
@@ -29,25 +27,21 @@ fn parse_add(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| parse_mul(s).and_then(|s| s.tag_node("mul")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_add_2(s).and_then(|s| s.tag_node("add_2")))
+                .and_then(|s| s.optional(|s| parse_add_2(s).and_then(|s| s.tag_node("add_2"))))
         })
     })
 }
-
 #[inline]
 fn parse_add_2(state: Input) -> Output {
-    state.rule(CalculatorRule::Add2, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| builtin_text(s, "+", false))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_mul(s).and_then(|s| s.tag_node("mul")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_add_2(s).and_then(|s| s.tag_node("add_2")))
-        })
+    state.sequence(|s| {
+        Ok(s)
+            .and_then(|s| builtin_text(s, "+", false))
+            .and_then(|s| builtin_ignore(s))
+            .and_then(|s| parse_mul(s).and_then(|s| s.tag_node("mul")))
+            .and_then(|s| builtin_ignore(s))
+            .and_then(|s| s.optional(|s| parse_add_2(s).and_then(|s| s.tag_node("add_2"))))
     })
 }
-
 #[inline]
 fn parse_mul(state: Input) -> Output {
     state.rule(CalculatorRule::Mul, |s| {
@@ -55,25 +49,21 @@ fn parse_mul(state: Input) -> Output {
             Ok(s)
                 .and_then(|s| parse_pow(s).and_then(|s| s.tag_node("pow")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_mul_2(s).and_then(|s| s.tag_node("mul_2")))
+                .and_then(|s| s.optional(|s| parse_mul_2(s).and_then(|s| s.tag_node("mul_2"))))
         })
     })
 }
-
 #[inline]
 fn parse_mul_2(state: Input) -> Output {
-    state.rule(CalculatorRule::Mul2, |s| {
-        s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| builtin_text(s, "*", false))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_pow(s).and_then(|s| s.tag_node("pow")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_mul_2(s).and_then(|s| s.tag_node("mul_2")))
-        })
+    state.sequence(|s| {
+        Ok(s)
+            .and_then(|s| builtin_text(s, "*", false))
+            .and_then(|s| builtin_ignore(s))
+            .and_then(|s| parse_pow(s).and_then(|s| s.tag_node("pow")))
+            .and_then(|s| builtin_ignore(s))
+            .and_then(|s| s.optional(|s| parse_mul_2(s).and_then(|s| s.tag_node("mul_2"))))
     })
 }
-
 #[inline]
 fn parse_pow(state: Input) -> Output {
     state.rule(CalculatorRule::Pow, |s| {
@@ -91,12 +81,10 @@ fn parse_pow(state: Input) -> Output {
             .or_else(|s| parse_atom(s).and_then(|s| s.tag_node("atom")))
     })
 }
-
 #[inline]
 fn parse_atom(state: Input) -> Output {
     state.rule(CalculatorRule::Atom, |s| parse_number(s).and_then(|s| s.tag_node("number")))
 }
-
 #[inline]
 fn parse_number(state: Input) -> Output {
     state.rule(CalculatorRule::Number, |s| {
@@ -106,7 +94,6 @@ fn parse_number(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_integer(state: Input) -> Output {
     state.rule(CalculatorRule::Integer, |s| {
@@ -116,7 +103,6 @@ fn parse_integer(state: Input) -> Output {
         })
     })
 }
-
 #[inline]
 fn parse_white_space(state: Input) -> Output {
     state.rule(CalculatorRule::WhiteSpace, |s| {

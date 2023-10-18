@@ -5,10 +5,10 @@ grammar Calculator {
 entry class Expression {
     Add
 }
-class Add { Mul Add2 }
-class Add2 { '+' Mul Add2 }
-class Mul { Pow Mul2 }
-class Mul2 { '*' Pow Mul2 }
+class Add { Mul Add2? }
+class Add2 { '+' Mul Add2? }
+class Mul { Pow Mul2? }
+class Mul2 { '*' Pow Mul2? }
 class Pow {
     Atom "^" Pow | Atom
 }

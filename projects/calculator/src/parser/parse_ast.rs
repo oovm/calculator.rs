@@ -32,7 +32,7 @@ impl YggdrasilNode for AddNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            add_2: pair.take_tagged_one::<Add2Node>(Cow::Borrowed("add_2"))?,
+            add_2: pair.take_tagged_option::<Add2Node>(Cow::Borrowed("add_2")),
             mul: pair.take_tagged_one::<MulNode>(Cow::Borrowed("mul"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
@@ -80,7 +80,7 @@ impl YggdrasilNode for MulNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            mul_2: pair.take_tagged_one::<Mul2Node>(Cow::Borrowed("mul_2"))?,
+            mul_2: pair.take_tagged_option::<Mul2Node>(Cow::Borrowed("mul_2")),
             pow: pair.take_tagged_one::<PowNode>(Cow::Borrowed("pow"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
@@ -174,9 +174,7 @@ impl YggdrasilNode for NumberNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -196,9 +194,7 @@ impl YggdrasilNode for IntegerNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]
@@ -218,9 +214,7 @@ impl YggdrasilNode for WhiteSpaceNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self {
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
     }
 }
 #[automatically_derived]

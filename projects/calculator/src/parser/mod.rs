@@ -3,8 +3,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_cst;
 mod parse_ast;
+mod parse_cst;
 
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
@@ -76,7 +76,7 @@ pub struct ExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AddNode {
-    pub add_2: Add2Node,
+    pub add_2: Option<Add2Node>,
     pub mul: MulNode,
     pub span: Range<u32>,
 }
@@ -90,7 +90,7 @@ pub struct Add2Node {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MulNode {
-    pub mul_2: Mul2Node,
+    pub mul_2: Option<Mul2Node>,
     pub pow: PowNode,
     pub span: Range<u32>,
 }
