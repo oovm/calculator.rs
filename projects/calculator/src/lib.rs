@@ -6,4 +6,4 @@
 
 pub use yggdrasil_rt::{YggdrasilNode, YggdrasilParser};
 
-pub mod json5;
+pub mod parser;

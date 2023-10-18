@@ -13,7 +13,7 @@ cargo install ycc --force
 or download from [release](https://github.com/ygg-lang/yggdrasil.rs/releases) and add to `$PATH`.
 
 2. Written grammar definition file,
-- Example: [json5.ygg](projects/calculator/grammars/json5.ygg)
+- Example: [json5.ygg](projects/calculator/grammars/calculator.ygg)
 
 3. Run build command
 
@@ -25,7 +25,7 @@ ycc build
 ## Build with RUST dependence 
 
 1. Written grammar definition file, 
-  - Example: [json5.ygg](projects/calculator/grammars/json5.ygg)
+  - Example: [json5.ygg](projects/calculator/grammars/calculator.ygg)
 
 2. Define build dependencies in cargo(require rust nightly)
 

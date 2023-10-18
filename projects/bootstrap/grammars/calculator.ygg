@@ -1,0 +1,39 @@
+grammar Calculator {
+
+}
+
+entry class Expression {
+    Additive
+}
+class Additive {
+    lhs:Multiplicative "+" rhs:Additive
+}
+class Multiplicative {
+    lhs:Exponent "*" rhs:Multiplicative
+}
+class Exponent {
+    lhs:Exponent "+" rhs:Atomic
+}
+class Atomic {
+    Number
+}
+// === number === ------------------------------------------------------------------------------------------------------
+@style(number)
+atomic class Number {
+    /[+-]?(0|[1-9][0-9]*)/
+}
+@style(number)
+atomic class Integer {
+    /0|[1-9][0-9]*/
+}
+// === ignores === -----------------------------------------------------------------------------------------------------
+ignore class WhiteSpace {
+    [\p{WhiteSpace}]
+}
+
+//@style(comment)
+//ignore union Comment {
+//    | @comment_line('//')
+//    | @comment_line('#')
+//    | @comment_block('/*', '*/', nest: false)
+//}

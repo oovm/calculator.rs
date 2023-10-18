@@ -1,0 +1,233 @@
+<svg class="railroad" viewBox="0 0 608 246" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style type="text/css">
+svg.railroad {
+    background-color: hsl(30, 20%, 95%);
+    background-size: 15px 15px;
+    background-image: linear-gradient(to right, rgba(30, 30, 30, .05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 30, 30, .05) 1px, transparent 1px);
+}
+
+svg.railroad path {
+    stroke-width: 3px;
+    stroke: black;
+    fill: transparent;
+}
+
+svg.railroad .debug {
+    stroke-width: 1px;
+    stroke: red;
+}
+
+svg.railroad text {
+    font-size: 14px;
+    font-family: monospace;
+    text-anchor: middle;
+}
+
+svg.railroad .nonterminal text {
+    font-weight: bold;
+}
+
+svg.railroad text.comment {
+    font-family: serif;
+    font-style: italic;
+    font-size: 12px;
+}
+
+svg.railroad rect {
+    stroke-width: 3px;
+    stroke: black;
+}
+
+svg.railroad g.labeledbox > rect {
+    stroke-width: 1px;
+    stroke: grey;
+    stroke-dasharray: 5px;
+    fill: rgba(90, 90, 150, .1);
+}
+
+svg.railroad .symbol > rect {
+    fill: rgba(90, 90, 150, .1);
+}
+
+svg.railroad .regex > rect {
+    fill: honeydew;
+}
+
+svg.railroad .string > rect {
+    fill: cornsilk;
+}
+
+svg.railroad .character > rect {
+    fill: lightcoral;
+}
+</style>
+<g class="verticalgrid">
+<g class="sequence">
+<path d=" M 10 21 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Expression" x="75" y="26">
+Expression</text>
+<a class="link" xlink:href="#Additive">
+<g class="symbol">
+<rect height="22" width="84" x="125" y="10"/>
+<text x="167" y="26">
+Additive</text>
+</g>
+</a>
+<path d=" M 219 21 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 21 h 10"/>
+<path d=" M 115 21 h 10"/>
+<path d=" M 209 21 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 55 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Additive" x="68" y="60">
+Additive</text>
+<g class="sequence">
+<g class="sequence">
+<a class="link" xlink:href="#Multiplicative">
+<g class="symbol">
+<rect height="22" width="132" x="111" y="44"/>
+<text x="177" y="60">
+Multiplicative</text>
+</g>
+</a>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="76" x="253" y="44"/>
+<text x="291" y="60">
+IGNORED</text>
+</g>
+<g class="string">
+<rect height="22" rx="10" ry="10" width="28" x="339" y="44"/>
+<text x="353" y="60">
++</text>
+</g>
+<path d=" M 243 55 h 10"/>
+<path d=" M 329 55 h 10"/>
+</g>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="76" x="377" y="44"/>
+<text x="415" y="60">
+IGNORED</text>
+</g>
+<a class="link" xlink:href="#Additive">
+<g class="symbol">
+<rect height="22" width="84" x="463" y="44"/>
+<text x="505" y="60">
+Additive</text>
+</g>
+</a>
+<path d=" M 367 55 h 10"/>
+<path d=" M 453 55 h 10"/>
+</g>
+<path d=" M 557 55 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 55 h 10"/>
+<path d=" M 101 55 h 10"/>
+<path d=" M 547 55 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 89 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Multiplicative" x="89" y="94">
+Multiplicative</text>
+<g class="sequence">
+<g class="sequence">
+<a class="link" xlink:href="#Atomic">
+<g class="symbol">
+<rect height="22" width="68" x="153" y="78"/>
+<text x="187" y="94">
+Atomic</text>
+</g>
+</a>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="76" x="231" y="78"/>
+<text x="269" y="94">
+IGNORED</text>
+</g>
+<g class="string">
+<rect height="22" rx="10" ry="10" width="28" x="317" y="78"/>
+<text x="331" y="94">
+*</text>
+</g>
+<path d=" M 221 89 h 10"/>
+<path d=" M 307 89 h 10"/>
+</g>
+<g class="character">
+<rect height="22" rx="10" ry="10" width="76" x="355" y="78"/>
+<text x="393" y="94">
+IGNORED</text>
+</g>
+<a class="link" xlink:href="#Multiplicative">
+<g class="symbol">
+<rect height="22" width="132" x="441" y="78"/>
+<text x="507" y="94">
+Multiplicative</text>
+</g>
+</a>
+<path d=" M 345 89 h 10"/>
+<path d=" M 431 89 h 10"/>
+</g>
+<path d=" M 583 89 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 89 h 10"/>
+<path d=" M 143 89 h 10"/>
+<path d=" M 573 89 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 123 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Atomic" x="61" y="128">
+Atomic</text>
+<a class="link" xlink:href="#Number">
+<g class="symbol">
+<rect height="22" width="68" x="97" y="112"/>
+<text x="131" y="128">
+Number</text>
+</g>
+</a>
+<path d=" M 175 123 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 123 h 10"/>
+<path d=" M 87 123 h 10"/>
+<path d=" M 165 123 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 157 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Number" x="61" y="162">
+Number</text>
+<g class="string">
+<rect height="22" rx="10" ry="10" width="188" x="97" y="146"/>
+<text x="191" y="162">
+[+-]?(0|[1-9][0-9]*)</text>
+</g>
+<path d=" M 295 157 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 157 h 10"/>
+<path d=" M 87 157 h 10"/>
+<path d=" M 285 157 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 191 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="Integer" x="64" y="196">
+Integer</text>
+<g class="string">
+<rect height="22" rx="10" ry="10" width="124" x="104" y="180"/>
+<text x="166" y="196">
+0|[1-9][0-9]*</text>
+</g>
+<path d=" M 238 191 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 191 h 10"/>
+<path d=" M 94 191 h 10"/>
+<path d=" M 228 191 h 10"/>
+</g>
+<g class="sequence">
+<path d=" M 10 225 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<text class="comment" id="WhiteSpace" x="75" y="230">
+WhiteSpace</text>
+<g class="string">
+<rect height="22" rx="10" ry="10" width="148" x="125" y="214"/>
+<text x="199" y="230">
+[\p{WhiteSpace}]</text>
+</g>
+<path d=" M 283 225 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 225 h 10"/>
+<path d=" M 115 225 h 10"/>
+<path d=" M 273 225 h 10"/>
+</g>
+</g>
+</svg>
