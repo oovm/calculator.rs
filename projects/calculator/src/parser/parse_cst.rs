@@ -3,8 +3,9 @@ use super::*;
 pub(super) fn parse_cst(input: &str, rule: CalculatorRule) -> OutputResult<CalculatorRule> {
     state(input, |state| match rule {
         CalculatorRule::Expression => parse_expression(state),
-        CalculatorRule::Additive => parse_additive(state),
-        CalculatorRule::Multiplicative => parse_multiplicative(state),
+        CalculatorRule::Add => parse_add(state),
+        CalculatorRule::Mul => parse_mul(state),
+        CalculatorRule::Pow => parse_pow(state),
         CalculatorRule::Atomic => parse_atomic(state),
         CalculatorRule::Number => parse_number(state),
         CalculatorRule::Integer => parse_integer(state),
@@ -16,19 +17,25 @@ pub(super) fn parse_cst(input: &str, rule: CalculatorRule) -> OutputResult<Calcu
 #[inline]
 fn parse_expression(state: Input) -> Output {
     state.rule(CalculatorRule::Expression, |s| {
-        parse_additive(s).and_then(|s| s.tag_node("additive"))
+        parse_add(s).and_then(|s| s.tag_node("add"))
     })
 }
 #[inline]
-fn parse_additive(state: Input) -> Output {
-    state.rule(CalculatorRule::Additive, |s| {
-        s.sequence(|s|Ok(s).and_then(|s|s.sequence(|s|Ok(s).and_then(|s|parse_multiplicative(s).and_then(|s| s.tag_node("multiplicative"))).and_then(|s|builtin_ignore(s)).and_then(|s|builtin_text(s, "+", false)))).and_then(|s|builtin_ignore(s)).and_then(|s|parse_additive(s).and_then(|s| s.tag_node("rhs")))).and_then(|s| s.tag_node("lhs"))
+fn parse_add(state: Input) -> Output {
+    state.rule(CalculatorRule::Add, |s| {
+        s.sequence(|s|Ok(s).and_then(|s|parse_add(s).and_then(|s| s.tag_node("add"))).and_then(|s|builtin_ignore(s)).and_then(|s|s.optional(|s|s.sequence(|s|Ok(s).and_then(|s|builtin_text(s, "+", false)).and_then(|s|builtin_ignore(s)).and_then(|s|parse_mul(s).and_then(|s| s.tag_node("rhs"))))))).and_then(|s| s.tag_node("lhs"))
     })
 }
 #[inline]
-fn parse_multiplicative(state: Input) -> Output {
-    state.rule(CalculatorRule::Multiplicative, |s| {
-        s.sequence(|s|Ok(s).and_then(|s|s.sequence(|s|Ok(s).and_then(|s|parse_atomic(s).and_then(|s| s.tag_node("atomic"))).and_then(|s|builtin_ignore(s)).and_then(|s|builtin_text(s, "*", false)))).and_then(|s|builtin_ignore(s)).and_then(|s|parse_multiplicative(s).and_then(|s| s.tag_node("rhs")))).and_then(|s| s.tag_node("lhs"))
+fn parse_mul(state: Input) -> Output {
+    state.rule(CalculatorRule::Mul, |s| {
+        s.sequence(|s|Ok(s).and_then(|s|parse_mul(s).and_then(|s| s.tag_node("mul"))).and_then(|s|builtin_ignore(s)).and_then(|s|s.optional(|s|s.sequence(|s|Ok(s).and_then(|s|builtin_text(s, "*", false)).and_then(|s|builtin_ignore(s)).and_then(|s|parse_pow(s).and_then(|s| s.tag_node("rhs"))))))).and_then(|s| s.tag_node("lhs"))
+    })
+}
+#[inline]
+fn parse_pow(state: Input) -> Output {
+    state.rule(CalculatorRule::Pow, |s| {
+        s.sequence(|s|Ok(s).and_then(|s|s.optional(|s|s.sequence(|s|Ok(s).and_then(|s|parse_atomic(s).and_then(|s| s.tag_node("atomic"))).and_then(|s|builtin_ignore(s)).and_then(|s|builtin_text(s, "^", false))).and_then(|s| s.tag_node("lhs")))).and_then(|s|builtin_ignore(s)).and_then(|s|parse_pow(s).and_then(|s| s.tag_node("rhs"))))
     })
 }
 #[inline]

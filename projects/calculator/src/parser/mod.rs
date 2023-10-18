@@ -31,8 +31,9 @@ impl YggdrasilParser for CalculatorParser {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum CalculatorRule {
     Expression,
-    Additive,
-    Multiplicative,
+    Add,
+    Mul,
+    Pow,
     Atomic,
     Number,
     Integer,
@@ -51,8 +52,9 @@ impl YggdrasilRule for CalculatorRule {
     fn get_style(&self) -> &'static str {
         match self {
             Self::Expression => "",
-            Self::Additive => "",
-            Self::Multiplicative => "",
+            Self::Add => "",
+            Self::Mul => "",
+            Self::Pow => "",
             Self::Atomic => "",
             Self::Number => "",
             Self::Integer => "",
@@ -64,21 +66,28 @@ impl YggdrasilRule for CalculatorRule {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExpressionNode {
-    pub additive: AdditiveNode,
+    pub add: AddNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct AdditiveNode {
-    pub multiplicative: MultiplicativeNode,
-    pub rhs: Box<AdditiveNode>,
+pub struct AddNode {
+    pub add: Box<AddNode>,
+    pub rhs: MulNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct MultiplicativeNode {
+pub struct MulNode {
+    pub mul: Box<MulNode>,
+    pub rhs: PowNode,
+    pub span: Range<u32>,
+}
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct PowNode {
     pub atomic: AtomicNode,
-    pub rhs: MultiplicativeNode,
+    pub rhs: Box<PowNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]

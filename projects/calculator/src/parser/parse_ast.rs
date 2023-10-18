@@ -9,7 +9,7 @@ impl YggdrasilNode for ExpressionNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            additive: pair.take_tagged_one::<AdditiveNode>(Cow::Borrowed("additive"))?,
+            add: pair.take_tagged_one::<AddNode>(Cow::Borrowed("add"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -23,7 +23,7 @@ impl FromStr for ExpressionNode {
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for AdditiveNode {
+impl YggdrasilNode for AddNode {
     type Rule = CalculatorRule;
 
     fn get_range(&self) -> Option<Range<usize>> {
@@ -32,22 +32,46 @@ impl YggdrasilNode for AdditiveNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            multiplicative: pair.take_tagged_one::<MultiplicativeNode>(Cow::Borrowed("multiplicative"))?,
-            rhs: pair.take_tagged_one::<AdditiveNode>(Cow::Borrowed("rhs"))?,
+            add: pair.take_tagged_box::<AddNode>(Cow::Borrowed("add"))?,
+            rhs: pair.take_tagged_one::<MulNode>(Cow::Borrowed("rhs"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
 }
 #[automatically_derived]
-impl FromStr for AdditiveNode {
+impl FromStr for AddNode {
     type Err = YggdrasilError<CalculatorRule>;
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<CalculatorRule>> {
-        Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Additive)?)
+        Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Add)?)
     }
 }
 #[automatically_derived]
-impl YggdrasilNode for MultiplicativeNode {
+impl YggdrasilNode for MulNode {
+    type Rule = CalculatorRule;
+
+    fn get_range(&self) -> Option<Range<usize>> {
+        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+    }
+    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        let _span = pair.get_span();
+        Ok(Self {
+            mul: pair.take_tagged_box::<MulNode>(Cow::Borrowed("mul"))?,
+            rhs: pair.take_tagged_one::<PowNode>(Cow::Borrowed("rhs"))?,
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for MulNode {
+    type Err = YggdrasilError<CalculatorRule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<CalculatorRule>> {
+        Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Mul)?)
+    }
+}
+#[automatically_derived]
+impl YggdrasilNode for PowNode {
     type Rule = CalculatorRule;
 
     fn get_range(&self) -> Option<Range<usize>> {
@@ -57,17 +81,17 @@ impl YggdrasilNode for MultiplicativeNode {
         let _span = pair.get_span();
         Ok(Self {
             atomic: pair.take_tagged_one::<AtomicNode>(Cow::Borrowed("atomic"))?,
-            rhs: pair.take_tagged_one::<MultiplicativeNode>(Cow::Borrowed("rhs"))?,
+            rhs: pair.take_tagged_box::<PowNode>(Cow::Borrowed("rhs"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
 }
 #[automatically_derived]
-impl FromStr for MultiplicativeNode {
+impl FromStr for PowNode {
     type Err = YggdrasilError<CalculatorRule>;
 
     fn from_str(input: &str) -> Result<Self, YggdrasilError<CalculatorRule>> {
-        Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Multiplicative)?)
+        Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Pow)?)
     }
 }
 #[automatically_derived]

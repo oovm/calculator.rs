@@ -3,16 +3,16 @@ grammar Calculator {
 }
 
 entry class Expression {
-    Additive
+    Add
 }
-class Additive {
-    lhs:Multiplicative "+" rhs:Additive
+class Add {
+    lhs:Add ("+" rhs:Mul)?
 }
-class Multiplicative {
-    lhs:Exponent "*" rhs:Multiplicative
+class Mul {
+    lhs:Mul ("*" rhs:Pow)?
 }
-class Exponent {
-    lhs:Exponent "+" rhs:Atomic
+class Pow {
+    (lhs:Atomic "^")? rhs:Pow
 }
 class Atomic {
     Number

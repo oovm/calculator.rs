@@ -17,13 +17,6 @@ exclude = ["package.json", "tests/**"]
 version = "0.0.8"
 path = 'C:\Users\Dell\CLionProjects\yggdrasil.rs\projects\ygg-rt'
 
-[dev-dependencies]
-
-[dev-dependencies.yggdrasil-shared]
-version = "0.2.3"
-path = 'C:\Users\Dell\CLionProjects\yggdrasil.rs\projects\ygg-core'
-#git = "https://github.com/ygg-lang/yggdrasil.rs"
-#branch = "dev"
 
 [features]
 default = []
