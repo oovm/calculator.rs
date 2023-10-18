@@ -15,7 +15,7 @@ fn test_ascii() {
 }
 #[test]
 fn test_ascii2() {
-    let cst = CalculatorParser::parse_cst("1 * 2", CalculatorRule::Mul).unwrap();
+    let cst = CalculatorParser::parse_cst("1 * 2 * 3", CalculatorRule::Mul).unwrap();
     println!("Short Form:\n{}", cst);
     // let first = ExpressionNode::from_cst(cst).unwrap();
     // println!("{:#?}", first)

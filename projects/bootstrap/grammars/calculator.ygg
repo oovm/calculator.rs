@@ -5,29 +5,22 @@ grammar Calculator {
 entry class Expression {
     Add
 }
-class Add { Mul Add2? }
-class Add2 { OP_ADD Mul Add2? }
-class Mul { Pow Mul2? }
-class Mul2 { OP_MUL Pow Mul2? }
-class Pow {
-    Atom OP_POW Pow | Atom
-}
+class Add { Mul Add2* }
+class Add2 { OP_ADD Mul }
+
+class Mul { Pow Mul2* }
+class Mul2 { OP_MUL Pow }
+
+class Pow { Atom Pow2* }
+class Pow2 { OP_POW Atom }
+
 class Atom {
-    Number
+    /0|[1-9][0-9]*/
 }
 token {
     OP_ADD: '+'
     OP_MUL: '*'
     OP_POW: '^'
-}
-// === number === ------------------------------------------------------------------------------------------------------
-@style(number)
-atomic class Number {
-    /[+-]?(0|[1-9][0-9]*)/
-}
-@style(number)
-atomic class Integer {
-    /0|[1-9][0-9]*/
 }
 // === ignores === -----------------------------------------------------------------------------------------------------
 ignore class WhiteSpace {

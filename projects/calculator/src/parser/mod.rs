@@ -36,12 +36,11 @@ pub enum CalculatorRule {
     Mul,
     Mul2,
     Pow,
+    Pow2,
     Atom,
     OP_ADD,
     OP_MUL,
     OP_POW,
-    Number,
-    Integer,
     WhiteSpace,
     /// Label for text literal
     IgnoreText,
@@ -62,12 +61,11 @@ impl YggdrasilRule for CalculatorRule {
             Self::Mul => "",
             Self::Mul2 => "",
             Self::Pow => "",
+            Self::Pow2 => "",
             Self::Atom => "",
             Self::OP_ADD => "",
             Self::OP_MUL => "",
             Self::OP_POW => "",
-            Self::Number => "",
-            Self::Integer => "",
             Self::WhiteSpace => "",
             _ => "",
         }
@@ -82,14 +80,13 @@ pub struct ExpressionNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AddNode {
-    pub add_2: Option<Add2Node>,
+    pub add_2: Vec<Add2Node>,
     pub mul: MulNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Add2Node {
-    pub add_2: Option<Box<Add2Node>>,
     pub mul: MulNode,
     pub op_add: OpAddNode,
     pub span: Range<u32>,
@@ -97,14 +94,13 @@ pub struct Add2Node {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MulNode {
-    pub mul_2: Option<Mul2Node>,
+    pub mul_2: Vec<Mul2Node>,
     pub pow: PowNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Mul2Node {
-    pub mul_2: Option<Box<Mul2Node>>,
     pub op_mul: OpMulNode,
     pub pow: PowNode,
     pub span: Range<u32>,
@@ -113,42 +109,35 @@ pub struct Mul2Node {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PowNode {
     pub atom: AtomNode,
+    pub pow_2: Vec<Pow2Node>,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Pow2Node {
+    pub atom: AtomNode,
     pub op_pow: OpPowNode,
-    pub pow: Box<PowNode>,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AtomNode {
-    pub number: NumberNode,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct OpAddNode {
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct OpMulNode {
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct OpPowNode {
-    pub span: Range<u32>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct NumberNode {
-    pub span: Range<u32>,
-}
-#[derive(Clone, Debug, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct IntegerNode {
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
