@@ -6,14 +6,19 @@ entry class Expression {
     Add
 }
 class Add { Mul Add2? }
-class Add2 { '+' Mul Add2? }
+class Add2 { OP_ADD Mul Add2? }
 class Mul { Pow Mul2? }
-class Mul2 { '*' Pow Mul2? }
+class Mul2 { OP_MUL Pow Mul2? }
 class Pow {
-    Atom "^" Pow | Atom
+    Atom OP_POW Pow | Atom
 }
 class Atom {
     Number
+}
+token {
+    OP_ADD: '+'
+    OP_MUL: '*'
+    OP_POW: '^'
 }
 // === number === ------------------------------------------------------------------------------------------------------
 @style(number)

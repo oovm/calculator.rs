@@ -37,6 +37,9 @@ pub enum CalculatorRule {
     Mul2,
     Pow,
     Atom,
+    OP_ADD,
+    OP_MUL,
+    OP_POW,
     Number,
     Integer,
     WhiteSpace,
@@ -60,6 +63,9 @@ impl YggdrasilRule for CalculatorRule {
             Self::Mul2 => "",
             Self::Pow => "",
             Self::Atom => "",
+            Self::OP_ADD => "",
+            Self::OP_MUL => "",
+            Self::OP_POW => "",
             Self::Number => "",
             Self::Integer => "",
             Self::WhiteSpace => "",
@@ -83,8 +89,9 @@ pub struct AddNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Add2Node {
-    pub add_2: Box<Add2Node>,
+    pub add_2: Option<Box<Add2Node>>,
     pub mul: MulNode,
+    pub op_add: OpAddNode,
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
@@ -97,7 +104,8 @@ pub struct MulNode {
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Mul2Node {
-    pub mul_2: Box<Mul2Node>,
+    pub mul_2: Option<Box<Mul2Node>>,
+    pub op_mul: OpMulNode,
     pub pow: PowNode,
     pub span: Range<u32>,
 }
@@ -105,6 +113,7 @@ pub struct Mul2Node {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PowNode {
     pub atom: AtomNode,
+    pub op_pow: OpPowNode,
     pub pow: Box<PowNode>,
     pub span: Range<u32>,
 }
@@ -112,6 +121,24 @@ pub struct PowNode {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AtomNode {
     pub number: NumberNode,
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpAddNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpMulNode {
+    pub span: Range<u32>,
+}
+
+#[derive(Clone, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct OpPowNode {
     pub span: Range<u32>,
 }
 #[derive(Clone, Debug, Hash)]
