@@ -1,12 +1,16 @@
 use super::*;
-
 #[automatically_derived]
 impl YggdrasilNode for ValueNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            _ => unimplemented!(),
+            Self::Array(s) => s.get_range(),
+            Self::Boolean(s) => s.get_range(),
+            Self::Null(s) => s.get_range(),
+            Self::Number(s) => s.get_range(),
+            Self::Object(s) => s.get_range(),
+            Self::String(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -32,7 +36,14 @@ impl YggdrasilNode for ValueNode {
         Err(YggdrasilError::invalid_node(Json5Rule::Value, _span))
     }
 }
+#[automatically_derived]
+impl FromStr for ValueNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Value)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for ObjectNode {
     type Rule = Json5Rule;
@@ -48,7 +59,14 @@ impl YggdrasilNode for ObjectNode {
         })
     }
 }
+#[automatically_derived]
+impl FromStr for ObjectNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Object)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for ObjectPairNode {
     type Rule = Json5Rule;
@@ -65,14 +83,23 @@ impl YggdrasilNode for ObjectPairNode {
         })
     }
 }
+#[automatically_derived]
+impl FromStr for ObjectPairNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::ObjectPair)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for ObjectKeyNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            _ => unimplemented!(),
+            Self::Identifier(s) => s.get_range(),
+            Self::Integer(s) => s.get_range(),
+            Self::String(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -89,7 +116,14 @@ impl YggdrasilNode for ObjectKeyNode {
         Err(YggdrasilError::invalid_node(Json5Rule::ObjectKey, _span))
     }
 }
+#[automatically_derived]
+impl FromStr for ObjectKeyNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::ObjectKey)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for ArrayNode {
     type Rule = Json5Rule;
@@ -105,14 +139,22 @@ impl YggdrasilNode for ArrayNode {
         })
     }
 }
+#[automatically_derived]
+impl FromStr for ArrayNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Array)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for StringNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            _ => unimplemented!(),
+            Self::String0(s) => s.get_range(),
+            Self::String1(s) => s.get_range(),
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -126,7 +168,14 @@ impl YggdrasilNode for StringNode {
         Err(YggdrasilError::invalid_node(Json5Rule::String, _span))
     }
 }
+#[automatically_derived]
+impl FromStr for StringNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::String)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for StringRawNode {
     type Rule = Json5Rule;
@@ -136,17 +185,27 @@ impl YggdrasilNode for StringRawNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for StringRawNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringRaw)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for StringTextNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            _ => unimplemented!(),
+            Self::StringEscape(s) => s.get_range(),
+            Self::StringText1 => None,
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
@@ -155,12 +214,19 @@ impl YggdrasilNode for StringTextNode {
             return Ok(Self::StringEscape(s));
         }
         if let Some(_) = pair.find_first_tag("string_text_1") {
-            return Ok(Self::StringText1);
+            return Ok(Self::StringText1)
         }
         Err(YggdrasilError::invalid_node(Json5Rule::StringText, _span))
     }
 }
+#[automatically_derived]
+impl FromStr for StringTextNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringText)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for StringEscapeNode {
     type Rule = Json5Rule;
@@ -170,10 +236,19 @@ impl YggdrasilNode for StringEscapeNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for StringEscapeNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::StringEscape)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for NumberNode {
     type Rule = Json5Rule;
@@ -183,10 +258,19 @@ impl YggdrasilNode for NumberNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for NumberNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Number)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for IntegerNode {
     type Rule = Json5Rule;
@@ -196,10 +280,19 @@ impl YggdrasilNode for IntegerNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for IntegerNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Integer)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for IdentifierNode {
     type Rule = Json5Rule;
@@ -209,31 +302,48 @@ impl YggdrasilNode for IdentifierNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for IdentifierNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Identifier)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for BooleanNode {
     type Rule = Json5Rule;
 
     fn get_range(&self) -> Option<Range<usize>> {
         match self {
-            _ => unimplemented!(),
+            Self::Boolean0 => None,
+            Self::Boolean1 => None,
         }
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         if let Some(_) = pair.find_first_tag("boolean_0") {
-            return Ok(Self::Boolean0);
+            return Ok(Self::Boolean0)
         }
         if let Some(_) = pair.find_first_tag("boolean_1") {
-            return Ok(Self::Boolean1);
+            return Ok(Self::Boolean1)
         }
         Err(YggdrasilError::invalid_node(Json5Rule::Boolean, _span))
     }
 }
+#[automatically_derived]
+impl FromStr for BooleanNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Boolean)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for NullNode {
     type Rule = Json5Rule;
@@ -243,10 +353,19 @@ impl YggdrasilNode for NullNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
     }
 }
+#[automatically_derived]
+impl FromStr for NullNode {
+    type Err = YggdrasilError<Json5Rule>;
 
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::Null)?)
+    }
+}
 #[automatically_derived]
 impl YggdrasilNode for WhiteSpaceNode {
     type Rule = Json5Rule;
@@ -256,6 +375,16 @@ impl YggdrasilNode for WhiteSpaceNode {
     }
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
-        Ok(Self { span: Range { start: _span.start() as u32, end: _span.end() as u32 } })
+        Ok(Self {
+            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
+        })
+    }
+}
+#[automatically_derived]
+impl FromStr for WhiteSpaceNode {
+    type Err = YggdrasilError<Json5Rule>;
+
+    fn from_str(input: &str) -> Result<Self, YggdrasilError<Json5Rule>> {
+        Self::from_cst(Json5Parser::parse_cst(input, Json5Rule::WhiteSpace)?)
     }
 }
