@@ -3,12 +3,13 @@
 #![allow(clippy::unnecessary_cast)]
 #![doc = include_str!("readme.md")]
 
-mod parse_ast;
-mod parse_cst;
-
 use core::str::FromStr;
 use std::{borrow::Cow, ops::Range, sync::OnceLock};
+
 use yggdrasil_rt::*;
+
+mod parse_ast;
+mod parse_cst;
 
 type Input<'i> = Box<State<'i, CalculatorRule>>;
 type Output<'i> = Result<Box<State<'i, CalculatorRule>>, Box<State<'i, CalculatorRule>>>;
@@ -73,9 +74,11 @@ impl YggdrasilRule for CalculatorRule {
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ExpressionNode {
-    pub add: AddNode,
-    pub span: Range<u32>,
+pub enum ExpressionNode {
+    Add { lhs: Box<ExpressionNode>, op_add: OpAddNode, rhs: Box<ExpressionNode>, span: Range<u32> },
+    Mul { lhs: Box<ExpressionNode>, op_mul: OpMulNode, rhs: Box<ExpressionNode>, span: Range<u32> },
+    Pow { lhs: Box<ExpressionNode>, op_pow: OpPowNode, rhs: Box<ExpressionNode>, span: Range<u32> },
+    Atomic { atomic: AtomNode, span: Range<u32> },
 }
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -112,7 +115,6 @@ pub struct PowNode {
     pub pow_2: Vec<Pow2Node>,
     pub span: Range<u32>,
 }
-
 #[derive(Clone, Debug, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Pow2Node {

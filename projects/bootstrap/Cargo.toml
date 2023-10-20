@@ -17,7 +17,7 @@ anyhow = "1.0.75"
 url = "2.4.1"
 
 [dependencies.yggdrasil-shared]
-version = "0.2.3"
+version = "0.2.5"
 path = 'C:\Users\Dell\CLionProjects\yggdrasil.rs\projects\ygg-core'
 #git = "https://github.com/ygg-lang/yggdrasil.rs"
 #branch = "dev"

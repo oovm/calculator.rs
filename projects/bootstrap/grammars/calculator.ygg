@@ -5,6 +5,7 @@ grammar Calculator {
 entry class Expression {
     Add
 }
+
 class Add { Mul Add2* }
 class Add2 { OP_ADD Mul }
 

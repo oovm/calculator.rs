@@ -3,12 +3,12 @@ use super::*;
 pub(super) fn parse_cst(input: &str, rule: CalculatorRule) -> OutputResult<CalculatorRule> {
     state(input, |state| match rule {
         CalculatorRule::Expression => parse_expression(state),
-        CalculatorRule::Add => parse_add(state),
-        CalculatorRule::Add2 => parse_add_2(state),
-        CalculatorRule::Mul => parse_mul(state),
-        CalculatorRule::Mul2 => parse_mul_2(state),
+        CalculatorRule::Add => parse_expression_add(state),
+        CalculatorRule::Add2 => parse_expression_add_residual(state),
+        CalculatorRule::Mul => parse_expression_mul(state),
+        CalculatorRule::Mul2 => parse_expression_mul_residual(state),
         CalculatorRule::Pow => parse_pow(state),
-        CalculatorRule::Pow2 => parse_pow_2(state),
+        CalculatorRule::Pow2 => parse_expression_pow_residual(state),
         CalculatorRule::Atom => parse_atom(state),
         CalculatorRule::OP_ADD => parse_op_add(state),
         CalculatorRule::OP_MUL => parse_op_mul(state),
@@ -20,44 +20,63 @@ pub(super) fn parse_cst(input: &str, rule: CalculatorRule) -> OutputResult<Calcu
 }
 #[inline]
 fn parse_expression(state: Input) -> Output {
-    state.rule(CalculatorRule::Expression, |s| parse_add(s).and_then(|s| s.tag_node("add")))
+    state.rule(CalculatorRule::Expression, |s| {
+        parse_expression_add(s).and_then(|s| s.tag_node("add")).and_then(crate::helpers::climb)
+    })
 }
+
 #[inline]
-fn parse_add(state: Input) -> Output {
-    state.rule(CalculatorRule::Add, |s| {
+fn parse_expression_add(state: Input) -> Output {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
-            Ok(s)
-                .and_then(|s| parse_mul(s).and_then(|s| s.tag_node("mul")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_add_2(s).and_then(|s| s.tag_node("add_2"))))
+            Ok(s) //
+                .and_then(|s| parse_expression_mul(s).and_then(|s| s.tag_node("mul")))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s) //
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_expression_add_residual(s).and_then(|s| s.tag_node("add")))
+                        })
+                    })
+                })
         })
     })
 }
+
 #[inline]
-fn parse_add_2(state: Input) -> Output {
-    state.rule(CalculatorRule::Add2, |s| {
+fn parse_expression_add_residual(state: Input) -> Output {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| parse_op_add(s).and_then(|s| s.tag_node("op_add")))
                 .and_then(|s| builtin_ignore(s))
-                .and_then(|s| parse_mul(s).and_then(|s| s.tag_node("mul")))
+                .and_then(|s| parse_expression_mul(s).and_then(|s| s.tag_node("mul")))
         })
     })
 }
+
 #[inline]
-fn parse_mul(state: Input) -> Output {
-    state.rule(CalculatorRule::Mul, |s| {
+fn parse_expression_mul(state: Input) -> Output {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
-            Ok(s)
+            Ok(s) //
                 .and_then(|s| parse_pow(s).and_then(|s| s.tag_node("pow")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_mul_2(s).and_then(|s| s.tag_node("mul_2"))))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s) //
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_expression_mul_residual(s).and_then(|s| s.tag_node("mul")))
+                        })
+                    })
+                })
         })
     })
 }
 #[inline]
-fn parse_mul_2(state: Input) -> Output {
-    state.rule(CalculatorRule::Mul2, |s| {
+fn parse_expression_mul_residual(state: Input) -> Output {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| parse_op_mul(s).and_then(|s| s.tag_node("op_mul")))
@@ -68,19 +87,25 @@ fn parse_mul_2(state: Input) -> Output {
 }
 #[inline]
 fn parse_pow(state: Input) -> Output {
-    state.rule(CalculatorRule::Pow, |s| {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
-            Ok(s)
+            Ok(s) //
                 .and_then(|s| parse_atom(s).and_then(|s| s.tag_node("atom")))
-                .and_then(|s| builtin_ignore(s))
-                .and_then(|s| s.repeat(0..4294967295, |s| parse_pow_2(s).and_then(|s| s.tag_node("pow_2"))))
+                .and_then(|s| {
+                    s.repeat(0..4294967295, |s| {
+                        s.sequence(|s| {
+                            Ok(s) //
+                                .and_then(|s| builtin_ignore(s))
+                                .and_then(|s| parse_expression_pow_residual(s).and_then(|s| s.tag_node("pow")))
+                        })
+                    })
+                })
         })
     })
 }
-
 #[inline]
-fn parse_pow_2(state: Input) -> Output {
-    state.rule(CalculatorRule::Pow2, |s| {
+fn parse_expression_pow_residual(state: Input) -> Output {
+    state.rule(CalculatorRule::Expression, |s| {
         s.sequence(|s| {
             Ok(s)
                 .and_then(|s| parse_op_pow(s).and_then(|s| s.tag_node("op_pow")))

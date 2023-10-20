@@ -4,14 +4,10 @@ impl YggdrasilNode for ExpressionNode {
     type Rule = CalculatorRule;
 
     fn get_range(&self) -> Option<Range<usize>> {
-        Some(Range { start: self.span.start as usize, end: self.span.end as usize })
+        None
     }
-    fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
-        let _span = pair.get_span();
-        Ok(Self {
-            add: pair.take_tagged_one::<AddNode>(Cow::Borrowed("add"))?,
-            span: Range { start: _span.start() as u32, end: _span.end() as u32 },
-        })
+    fn from_pair(_: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
+        unimplemented!()
     }
 }
 #[automatically_derived]
@@ -32,7 +28,7 @@ impl YggdrasilNode for AddNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            add_2: pair.take_tagged_items::<Add2Node>(Cow::Borrowed("add_2"))?,
+            add_2: pair.take_tagged_items::<Add2Node>(Cow::Borrowed("add_2")).collect::<Result<Vec<_>, _>>()?,
             mul: pair.take_tagged_one::<MulNode>(Cow::Borrowed("mul"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
@@ -80,7 +76,7 @@ impl YggdrasilNode for MulNode {
     fn from_pair(pair: TokenPair<Self::Rule>) -> Result<Self, YggdrasilError<Self::Rule>> {
         let _span = pair.get_span();
         Ok(Self {
-            mul_2: pair.take_tagged_items::<Mul2Node>(Cow::Borrowed("mul_2"))?,
+            mul_2: pair.take_tagged_items::<Mul2Node>(Cow::Borrowed("mul_2")).collect::<Result<Vec<_>, _>>()?,
             pow: pair.take_tagged_one::<PowNode>(Cow::Borrowed("pow"))?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
@@ -129,7 +125,7 @@ impl YggdrasilNode for PowNode {
         let _span = pair.get_span();
         Ok(Self {
             atom: pair.take_tagged_one::<AtomNode>(Cow::Borrowed("atom"))?,
-            pow_2: pair.take_tagged_items::<Pow2Node>(Cow::Borrowed("pow_2"))?,
+            pow_2: pair.take_tagged_items::<Pow2Node>(Cow::Borrowed("pow_2")).collect::<Result<Vec<_>, _>>()?,
             span: Range { start: _span.start() as u32, end: _span.end() as u32 },
         })
     }
@@ -142,7 +138,6 @@ impl FromStr for PowNode {
         Self::from_cst(CalculatorParser::parse_cst(input, CalculatorRule::Pow)?)
     }
 }
-
 #[automatically_derived]
 impl YggdrasilNode for Pow2Node {
     type Rule = CalculatorRule;
@@ -159,7 +154,6 @@ impl YggdrasilNode for Pow2Node {
         })
     }
 }
-
 #[automatically_derived]
 impl FromStr for Pow2Node {
     type Err = YggdrasilError<CalculatorRule>;
